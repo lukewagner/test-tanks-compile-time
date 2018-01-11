@@ -4,16 +4,26 @@
         <meta charset="utf8">
     </head>
     <body>
-        <div id='result'>Before</div>
+        <div id='result'>Starting download...</div>
         <script>
+            const result = document.getElementById('result');
+
+            function roundPretty(x) {
+                return Math.round(x * 10) / 10;
+            }
+
             fetch('tanks.wasm')
             .then(response => response.arrayBuffer())
             .then(buffer => {
+                const sizeMB = buffer.byteLength / 1000000;
+                result.innerHTML += "<br>Finished downloading " + roundPretty(sizeMB) + "mb";
                 const before = performance.now();
                 WebAssembly.compile(buffer)
                 .then(module => {
                     const after = performance.now();
-                    document.getElementById('result').innerHTML = "Took: " + (after - before) + "ms";
+                    const deltaMS = after - before;
+                    result.innerHTML += "<br>WebAssembly.compile took " + roundPretty(deltaMS) + "ms" +
+                                        " (" + roundPretty((buffer.byteLength / 1000000) / (deltaMS / 1000)) + "mb/s)";
                 });
             });
         </script>
