@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf8">
+    </head>
+    <body>
+        <div id='result'>Before</div>
+        <script>
+            fetch('tanks.wasm')
+            .then(response => response.arrayBuffer())
+            .then(buffer => {
+                const before = performance.now();
+                WebAssembly.compile(buffer)
+                .then(module => {
+                    const after = performance.now();
+                    document.getElementById('result').innerHTML = "Took: " + (after - before) + "ms";
+                });
+            });
+        </script>
+    </body>
+</html>
